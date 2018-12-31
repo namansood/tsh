@@ -12,8 +12,8 @@ int main(int argc, char **argv) {
 		char *cmd = input();
 
 		if(strncmp(cmd, "exit", 4) == 0) {
-			break;
 			puts("bye lmao");
+			break;
 		}
 
 		int result = run(split(cmd));
