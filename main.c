@@ -23,6 +23,17 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
+/*
+
+how this function works:
+allocate memory for 32 chars
+input chars one by one
+if we have put in 32 chars, reallocate space for 32 more
+so on for 64, 96, so on
+return pointer to first char
+
+*/
+
 #define bufsize 32
 
 char* input(void) {
@@ -60,6 +71,18 @@ int run(char** input) {
 
 	return i;
 }
+
+/*
+
+how this function works:
+Input string: arg1 arg2 arg3 arg4 arg5
+Every space is replaced by null character to make strings
+And ret is a char pointer array with pointers to each of these strings
+ret is allocated variably similarly to the string of input()
+
+todo: add support for quotes and such
+
+*/
 
 #define argcount 4
 
