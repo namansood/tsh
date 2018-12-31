@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// for wait()
+#include <sys/wait.h>
+#include <unistd.h>
 
 char* input(void);
 
@@ -8,15 +11,22 @@ int run(char**);
 char** split(char*);
 
 int main(int argc, char **argv) {
-	while(1) {
-		char *cmd = input();
+	if(argc == 1) {
+		while(1) {
+			char *cmd = input();
 
-		if(strncmp(cmd, "exit", 4) == 0) {
-			puts("bye lmao");
-			break;
+			if(strncmp(cmd, "exit", 4) == 0) {
+				puts("bye lmao");
+				break;
+			}
+
+			int result = run(split(cmd));
+			printf("%d\n", result);
 		}
+	}
 
-		int result = run(split(cmd));
+	else {
+		int result = run(&(argv[1]));
 		printf("%d\n", result);
 	}
 
@@ -47,6 +57,7 @@ char* input(void) {
 
 	while(byte != '\n') {
 		byte = getchar();
+		if(byte == '\n') break;
 		str[bytes++] = byte;
 
 		// plus one to accomodate null character
@@ -62,14 +73,20 @@ char* input(void) {
 }
 
 int run(char** input) {
-	int i = 0;
+	int pid = fork(), status = -1;
 
-	while(strncmp(input[i], "\n", 1) != 0) {
-		printf("%s\n", input[i]);
-		i++;
+	if(pid == 0) {
+		// note: use execve for environment variables support
+		execvp(input[0], input);
+		exit(0);
 	}
 
-	return i;
+	else {
+
+		wait(&status);
+	}
+
+	return status;
 }
 
 /*
@@ -96,7 +113,7 @@ char** split(char* input) {
 	do {
 		byte = input[i];
 		
-		if(byte == ' ') {
+		if(byte == ' ' || byte == '\n') {
 			ret[strings++] = starter;
 			input[i] = '\0';
 			starter = &input[i+1];
@@ -113,9 +130,8 @@ char** split(char* input) {
 
 	ret[strings++] = starter;
 
-	char terminator[] = "\n";
-
-	ret[strings] = terminator;
+	// last pointer null pointer
+	ret[strings] = NULL;
 
 	return ret;
 }
