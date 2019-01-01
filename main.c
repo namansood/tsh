@@ -83,6 +83,16 @@ char* input(void) {
 	return str;
 }
 
+/*
+
+how this function works:
+fork() creates an exact copy of the current program
+returns 0 in child process, pid in parent
+so in child we run the command (execvp replaces the child process)
+and in the parent we wait for it to end and get the return status
+
+*/
+
 int run(char** input) {
 	int pid = fork(), status = -1;
 
