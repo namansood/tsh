@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// for wait()
 #include <sys/wait.h>
 #include <unistd.h>
+#include <limits.h>
+#include "commands.h"
 
 char* input(void);
 
@@ -20,8 +21,18 @@ int main(int argc, char **argv) {
 				break;
 			}
 
-			int result = run(split(cmd));
-			printf("%d\n", result);
+			else if(strncmp(cmd, "cd", 2) == 0) {
+				cd(split(cmd));
+			}
+
+			else if(strncmp(cmd, "pwd", 3) == 0) {
+				pwd();
+			}
+
+			else {
+				int result = run(split(cmd));
+				printf("%d\n", result);
+			}
 		}
 	}
 
