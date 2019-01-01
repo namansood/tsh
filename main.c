@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 #include <unistd.h>
+#include <pwd.h>
 #include <limits.h>
+
 #include "commands.h"
 
 char* input(void);
+void prompt(void);
 
 int run(char**);
 char** split(char*);
@@ -58,7 +62,7 @@ return pointer to first char
 #define bufsize 32
 
 char* input(void) {
-	printf("> ");
+	prompt();
 
 	char *str = (char*) malloc(bufsize * sizeof(char));
 
@@ -81,6 +85,27 @@ char* input(void) {
 	str[bytes] = '\0';
 
 	return str;
+}
+
+/*
+
+how this function works:
+geteuid() returns the current user's uid
+getpwuid() returns user details of a uid from /etc/passwd
+getcwd() puts current working directory in cwd string
+
+*/
+
+void prompt(void) {
+	char cwd[PATH_MAX] = "???", *username = "???";
+
+	getcwd(cwd, sizeof(cwd));
+
+	struct passwd *user = getpwuid(geteuid());
+
+	if(user) username = user->pw_name;
+
+	printf("%s at %s:\n> ", username, cwd);
 }
 
 /*
