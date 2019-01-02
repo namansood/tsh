@@ -18,12 +18,14 @@ char** split(char*);
 
 int main(int argc, char **argv) {
 	if(argc == 1) {
-		while(1) {
+		int keepRunning = 1;
+
+		while(keepRunning) {
 			char *cmd = input();
 
 			if(strncmp(cmd, "exit", 4) == 0) {
 				puts("bye lmao");
-				break;
+				keepRunning = 0;
 			}
 
 			else if(strncmp(cmd, "cd", 2) == 0) {
@@ -38,6 +40,8 @@ int main(int argc, char **argv) {
 				int result = run(split(cmd));
 				printf("%d\n", result);
 			}
+
+			free(cmd);
 		}
 	}
 

@@ -27,6 +27,8 @@ void cd(char **input) {
 
 	const int unameLength = 32;
 
+	int ret;
+
 	if(dir[0] == '~') {
 		char *homePath = (char *) malloc((unameLength + 6) * sizeof(char));
 
@@ -45,10 +47,14 @@ void cd(char **input) {
 
 		free(homePath);
 
-		dir = parsedDir;
-	}
+		ret = chdir(parsedDir);
 
-	int ret = chdir(dir);
+		free(parsedDir);
+	}
+	
+	else {
+		ret = chdir(dir);
+	}
 
 	if(ret) {
 		if(ret == -1) printf("Directory not found: %s\n", input[1]);
