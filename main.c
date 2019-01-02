@@ -7,6 +7,7 @@
 #include <pwd.h>
 #include <limits.h>
 
+#include "common.h"
 #include "commands.h"
 
 char* input(void);
@@ -97,13 +98,11 @@ getcwd() puts current working directory in cwd string
 */
 
 void prompt(void) {
-	char cwd[PATH_MAX] = "???", *username = "???";
+	char cwd[PATH_MAX] = "???";
+
+	char *username = getusername();
 
 	getcwd(cwd, sizeof(cwd));
-
-	struct passwd *user = getpwuid(geteuid());
-
-	if(user) username = user->pw_name;
 
 	printf("%s at %s:\n> ", username, cwd);
 }
