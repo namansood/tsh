@@ -16,6 +16,8 @@ void prompt(void);
 int run(char**);
 char** split(char*);
 
+void returnstatus(int);
+
 int main(int argc, char **argv) {
 	if(argc == 1) {
 		int keepRunning = 1;
@@ -38,7 +40,7 @@ int main(int argc, char **argv) {
 
 			else {
 				int result = run(split(cmd));
-				printf("%d\n", result);
+				returnstatus(result);
 			}
 
 			free(cmd);
@@ -47,7 +49,7 @@ int main(int argc, char **argv) {
 
 	else {
 		int result = run(&(argv[1]));
-		printf("%d\n", result);
+		returnstatus(result);
 	}
 
 	return 0;
@@ -126,12 +128,11 @@ int run(char** input) {
 
 	if(pid == 0) {
 		// note: use execve for environment variables support
-		execvp(input[0], input);
-		exit(0);
+		status = execvp(input[0], input);
+		exit(status);
 	}
 
 	else {
-
 		wait(&status);
 	}
 
@@ -183,4 +184,14 @@ char** split(char* input) {
 	ret[strings] = NULL;
 
 	return ret;
+}
+
+void returnstatus(int status) {
+	if(status == 0) return;
+	else if(status == 65280 || status == 255) {
+		printf("File not found.\n");
+	}
+	else {
+		printf("Program exited with code %d.\n", status);
+	}
 }
