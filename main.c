@@ -147,7 +147,11 @@ Every space is replaced by null character to make strings
 And ret is a char pointer array with pointers to each of these strings
 ret is allocated variably similarly to the string of input()
 
-todo: add support for quotes and such
+quotes support:
+doingQuotes stores null char (falsey value) if a quote isn't open,
+quote char if quote is open
+while a quote is open, suspend splitting cause it's all one argument
+close quote when same quote char re-encountered
 
 */
 
@@ -158,15 +162,30 @@ char** split(char* input) {
 
 	int strings = 0, multiplier = 1, i = 0;
 
-	char byte, *starter = &input[i];
+	char byte, *starter = &input[i], doingQuotes = '\0';
 
 	do {
 		byte = input[i];
 		
-		if(byte == ' ' || byte == '\n') {
+		if((byte == ' ' || byte == '\n') && !doingQuotes) {
 			ret[strings++] = starter;
 			input[i] = '\0';
 			starter = &input[i+1];
+		}
+
+		else if(byte == '\"' || byte == '\'') {
+			if(!doingQuotes) {
+				doingQuotes = byte;
+				// if this was starting a string, start at next char
+				if(starter == &byte) starter++;
+				// move everything in memory one character back
+				memmove(&input[i], &input[i+1], (strlen(&input[i+1])) * sizeof(char));
+			}
+			else if(byte == doingQuotes) {
+				doingQuotes = '\0';
+				// move everything in memory one character back
+				memmove(&input[i], &input[i+1], (strlen(&input[i+1])) * sizeof(char));
+			}
 		}
 
 		// plus one for terminator string
