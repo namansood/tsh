@@ -127,6 +127,9 @@ int run(char** input) {
 	int pid = fork(), status = -1;
 
 	if(pid == 0) {
+		for(int i  = 0; input[i]; i++) {
+			printf("argument: %s\n", input[i]);
+		}
 		// note: use execve for environment variables support
 		status = execvp(input[0], input);
 		exit(status);
@@ -167,7 +170,7 @@ char** split(char* input) {
 	do {
 		byte = input[i];
 		
-		if((byte == ' ' || byte == '\n') && !doingQuotes) {
+		if((byte == ' ' || byte == '\n') && (doingQuotes == '\0')) {
 			ret[strings++] = starter;
 			input[i] = '\0';
 			starter = &input[i+1];
@@ -178,13 +181,17 @@ char** split(char* input) {
 				doingQuotes = byte;
 				// if this was starting a string, start at next char
 				if(starter == &byte) starter++;
-				// move everything in memory one character back
-				memmove(&input[i], &input[i+1], (strlen(&input[i+1])) * sizeof(char));
+				// move everything in memory one character back (plus one for null)
+				memmove(&input[i], &input[i+1], (strlen(&input[i+1]) + 1) * sizeof(char));
+				// don't need to do i++ because you're already at the next char now
+				continue;
 			}
 			else if(byte == doingQuotes) {
 				doingQuotes = '\0';
-				// move everything in memory one character back
-				memmove(&input[i], &input[i+1], (strlen(&input[i+1])) * sizeof(char));
+				// move everything in memory one character back (plus one for null)
+				memmove(&input[i], &input[i+1], (strlen(&input[i+1]) + 1) * sizeof(char));
+				// don't need to do i++ because you're already at the next char now
+				continue;
 			}
 		}
 
