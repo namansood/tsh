@@ -127,9 +127,6 @@ int run(char** input) {
 	int pid = fork(), status = -1;
 
 	if(pid == 0) {
-		for(int i  = 0; input[i]; i++) {
-			printf("argument: %s\n", input[i]);
-		}
 		// note: use execve for environment variables support
 		status = execvp(input[0], input);
 		exit(status);
@@ -146,6 +143,7 @@ int run(char** input) {
 
 how this function works:
 Input string: arg1 arg2 arg3 arg4 arg5
+Duplicated into output string, output string modified
 Every space is replaced by null character to make strings
 And ret is a char pointer array with pointers to each of these strings
 ret is allocated variably similarly to the string of input()
@@ -160,20 +158,25 @@ close quote when same quote char re-encountered
 
 #define argcount 4
 
+
 char** split(char* input) {
 	char **ret = (char **) malloc(argcount * sizeof(char *));
 
+	char *output = (char *) malloc(strlen(input) * sizeof(char));
+
+	strncpy(output, input, strlen(input));
+
 	int strings = 0, multiplier = 1, i = 0;
 
-	char byte, *starter = &input[i], doingQuotes = '\0';
+	char byte, *starter = &output[i], doingQuotes = '\0';
 
 	do {
-		byte = input[i];
+		byte = output[i];
 		
 		if((byte == ' ' || byte == '\n') && (doingQuotes == '\0')) {
 			ret[strings++] = starter;
-			input[i] = '\0';
-			starter = &input[i+1];
+			output[i] = '\0';
+			starter = &output[i+1];
 		}
 
 		else if(byte == '\"' || byte == '\'') {
@@ -182,14 +185,14 @@ char** split(char* input) {
 				// if this was starting a string, start at next char
 				if(starter == &byte) starter++;
 				// move everything in memory one character back (plus one for null)
-				memmove(&input[i], &input[i+1], (strlen(&input[i+1]) + 1) * sizeof(char));
+				memmove(&output[i], &output[i+1], (strlen(&output[i+1]) + 1) * sizeof(char));
 				// don't need to do i++ because you're already at the next char now
 				continue;
 			}
 			else if(byte == doingQuotes) {
 				doingQuotes = '\0';
 				// move everything in memory one character back (plus one for null)
-				memmove(&input[i], &input[i+1], (strlen(&input[i+1]) + 1) * sizeof(char));
+				memmove(&output[i], &output[i+1], (strlen(&output[i+1]) + 1) * sizeof(char));
 				// don't need to do i++ because you're already at the next char now
 				continue;
 			}
@@ -213,10 +216,16 @@ char** split(char* input) {
 }
 
 void returnstatus(int status) {
+	if(!WIFEXITED(status)) return;
+
+	status = WEXITSTATUS(status);
+
 	if(status == 0) return;
-	else if(status == 65280 || status == 255) {
+	
+	if(status == 255) {
 		printf("File not found.\n");
 	}
+	
 	else {
 		printf("Program exited with code %d.\n", status);
 	}
