@@ -136,6 +136,10 @@ int run(char** input) {
 		wait(&status);
 	}
 
+	// free char * first, then char ** that points to it
+	free(input[0]);
+	free(input);
+
 	return status;
 }
 
@@ -182,8 +186,6 @@ char** split(char* input) {
 		else if(byte == '\"' || byte == '\'') {
 			if(!doingQuotes) {
 				doingQuotes = byte;
-				// if this was starting a string, start at next char
-				if(starter == &byte) starter++;
 				// move everything in memory one character back (plus one for null)
 				memmove(&output[i], &output[i+1], (strlen(&output[i+1]) + 1) * sizeof(char));
 				// don't need to do i++ because you're already at the next char now
