@@ -79,9 +79,9 @@ close quote when same quote char re-encountered
 char** split(char* input) {
 	char **ret = (char **) malloc(argcount * sizeof(char *));
 
-	char *output = (char *) malloc(strlen(input) * sizeof(char));
+	char *output = (char *) malloc((strlen(input) + 1) * sizeof(char));
 
-	strncpy(output, input, strlen(input));
+	strcpy(output, input);
 
 	int strings = 0, multiplier = 1, i = 0;
 
