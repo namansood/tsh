@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 			char *cmd = input();
 
 			if(strncmp(cmd, "exit", 4) == 0) {
-				puts("bye lmao");
+				puts("Exiting...");
 				keepRunning = 0;
 			}
 
