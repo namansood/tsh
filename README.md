@@ -6,7 +6,7 @@ Why turtle? Because turtles have shells.
 
 **Note:** since this shell uses Unix-specific headers, it will likely not run on Windows. I have not tested it on Windows or macOS.
 
-![Screenshot of shell](screenshot.png)
+<img src="screenshot.png" width="500">
 
 ## Build
 
