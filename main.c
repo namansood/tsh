@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <pwd.h>
-#include <limits.h>
-
-#include "common.h"
-#include "commands.h"
-#include "input.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include "includes/common.h"
+#include "includes/commands.h"
+#include "includes/input.h"
 
 int run(char**);
 void returnstatus(int);
