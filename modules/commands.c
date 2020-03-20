@@ -32,27 +32,10 @@ void cd(char **input) {
 
 	char *dir = input[1];
 
-	const int unameLength = 32;
-
 	int ret;
 
 	if(dir[0] == '~') {
-		char *homePath = (char *) malloc((unameLength + 6) * sizeof(char));
-
-		strncpy(homePath, "/home/", 7);
-
-		strncat(homePath, getusername(), unameLength);
-
-		int pathLength = strlen(&(dir[1])),
-			homeLength = strlen(homePath);
-
-		char *parsedDir = (char *) malloc((homeLength + pathLength) * sizeof(char));
-
-		strncpy(parsedDir, homePath, homeLength);
-
-		strncat(parsedDir, &(dir[1]), pathLength);
-
-		free(homePath);
+		char *parsedDir = getDirWithHome(dir);
 
 		ret = chdir(parsedDir);
 

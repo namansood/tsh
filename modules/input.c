@@ -84,6 +84,13 @@ close quote when same quote char re-encountered
 
 
 char** split(char* input) {
+	int freeInputHuh = 0;
+
+	if(input[0] == '~') {
+		input = getDirWithHome(input);
+		freeInputHuh = 1;
+	}
+
 	char **ret = (char **) malloc(argcount * sizeof(char *));
 
 	char *output = (char *) malloc((strlen(input) + 1) * sizeof(char));
@@ -133,6 +140,8 @@ char** split(char* input) {
 
 	// last pointer null pointer
 	ret[strings] = NULL;
+
+	if(freeInputHuh) free(input);
 
 	return ret;
 }
